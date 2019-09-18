@@ -56,7 +56,7 @@ var register = function register(initial, acceptLocalRoles, globalRoles, router,
                   console.warn("[vue-role] ".concat(to.path, " not have role"));
                 }
 
-                routePermission = to.meta.role || _store.default.getters["auth/user"];
+                routePermission = to.meta.role || _store.default.getters["auth/user"].role;
 
                 if (routePermission in globalRoles) {
                   routePermission = globalRoles[routePermission];

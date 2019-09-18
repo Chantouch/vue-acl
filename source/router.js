@@ -15,7 +15,7 @@ export const upRouter = (router, currentGlobal, notfound) => {
   router.beforeEach((to, from, next) => {
 
     /** @type {Array} */
-    const routePermission = to.meta.role || store.getters["auth/user"]
+    const routePermission = to.meta.role || store.getters["auth/user"].role
 
     if (!testRole(currentGlobal, routePermission))
       return next(notfound)

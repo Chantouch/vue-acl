@@ -25,7 +25,7 @@ var upRouter = function upRouter(router, currentGlobal, notfound) {
   if (router === null) return;
   router.beforeEach(function (to, from, next) {
     /** @type {Array} */
-    var routePermission = to.meta.role || _store.default.getters["auth/user"];
+    var routePermission = to.meta.role || _store.default.getters["auth/user"].role;
     if (!(0, _checker.testRole)(currentGlobal, routePermission)) return next(notfound);
     return next();
   });
