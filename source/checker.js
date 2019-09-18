@@ -9,12 +9,16 @@ export const testRole = (current, roles) => {
     console.error('[vue-role] you have invalid roles')
   }
 
-  if (!Array.isArray(roles)) {
+  if (!Array.isArray(roles) && typeof roles.generate !== "undefined") {
     roles = roles.generate()
   }
 
   let hasAllowed = false
-  roles.forEach((rule) => {
+  if (!Array.isArray(roles)) {
+    roles = [roles]
+  }
+
+  roles.map((rule) => {
     if (rule.includes('*')) hasAllowed = true
   })
 
@@ -22,14 +26,13 @@ export const testRole = (current, roles) => {
 
   const checkAnds = roles.map(rule => {
     let valid = true
-    rule.forEach(and => valid = valid && current.includes(and))
+    rule.map(and => valid = valid && current.includes(and))
     return valid
   })
 
   let result = false
-  checkAnds.forEach(or => {
-    if (or)
-      result = or
+  checkAnds.map(or => {
+    if (or) result = or
   })
 
   return result

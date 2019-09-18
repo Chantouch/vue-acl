@@ -97,7 +97,7 @@ export const register = (initial, acceptLocalRoles, globalRoles, router, notfoun
 
           if (ruleName in self) {
             if (!acceptLocalRoles) {
-              return console.error('[vue-role] acceptLocalRoles is not enabled')
+              console.error('[vue-role] acceptLocalRoles is not enabled')
             }
 
             const result = testRole(this.get, self[ruleName])

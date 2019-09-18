@@ -148,7 +148,7 @@ var register = function register(initial, acceptLocalRoles, globalRoles, router,
 
           if (ruleName in self) {
             if (!acceptLocalRoles) {
-              return console.error('[vue-role] acceptLocalRoles is not enabled');
+              console.error('[vue-role] acceptLocalRoles is not enabled');
             }
 
             var _result = (0, _checker.testRole)(this.get, self[ruleName]);
