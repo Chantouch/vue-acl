@@ -1,27 +1,26 @@
-
 /**
- * Test a rule with a permission group
- * @param {Array} current current permissions
- * @param {Array} rules rule to test
- * @return {boolean} valided rule
+ * Test a rule with a role group
+ * @param {Array} current current roles
+ * @param {Array} roles rule to test
+ * @return {boolean} validated rule
  */
-export const testPermission =(current, rules) => {
-  if (rules.generate === undefined && !Array.isArray(rules)) {
-    return console.error('[vue-acl] your have invalid rules')
-  }
+export const testRole = (current, roles) => {
+  // if (roles.generate === undefined && !Array.isArray(roles)) {
+  //   console.error('[vue-role] you have invalid roles')
+  // }
 
-  if (!Array.isArray(rules)) {
-    rules = rules.generate()
+  if (!Array.isArray(roles)) {
+    roles = roles.generate()
   }
 
   let hasAllowed = false
-  rules.forEach((rule) => {
+  roles.forEach((rule) => {
     if (rule.includes('*')) hasAllowed = true
   })
 
   if (hasAllowed) return true
 
-  const checkAnds = rules.map(rule => {
+  const checkAnds = roles.map(rule => {
     let valid = true
     rule.forEach(and => valid = valid && current.includes(and))
     return valid

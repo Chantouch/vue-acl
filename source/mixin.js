@@ -1,10 +1,7 @@
 // @ts-check
 import Vue from 'vue'
 
-import { testPermission } from './checker'
-
-
-
+import { testRole } from './checker'
 
 const EventBus = new Vue()
 
@@ -12,33 +9,36 @@ let currentGlobal = []
 let not = false
 
 
-export const register = (initial, acceptLocalRules, globalRules, router, notfound, middleware) => {
+export const register = (initial, acceptLocalRoles, globalRoles, router, notfound, middleware) => {
   currentGlobal = Array.isArray(initial) ? initial : [initial]
 
   if (router !== null && middleware) {
     router.beforeEach(async (to, from, next) => {
-      await middleware({change (a) {
-        currentGlobal = a
-      }})
+      await middleware({
+        change (a) {
+          currentGlobal = a
+        }
+      })
 
       // to be backwards compatible (notfound could be string)
       const notFoundPath = notfound.path || notfound;
       if (to.path === notFoundPath) return next()
 
       /** @type {Array} */
-      if (!('rule' in to.meta)) {
-        return console.error(`[vue-acl] ${to.path} not have rule`)
-      }
-      let routePermission = to.meta.rule
-
-      if (routePermission in globalRules) {
-        routePermission = globalRules[routePermission]
+      if (!('role' in to.meta)) {
+        console.warn(`[vue-role] ${to.path} not have role`)
       }
 
-      if (!testPermission(currentGlobal, routePermission)) {
+      let routePermission = to.meta.role
+
+      if (routePermission in globalRoles) {
+        routePermission = globalRoles[routePermission]
+      }
+
+      if (!testRole(currentGlobal, routePermission)) {
         // check if forwardQueryParams is set
         if (notfound.forwardQueryParams) {
-          return next({path: notFoundPath, query: to.query})
+          return next({ path: notFoundPath, query: to.query })
         }
         return next(notFoundPath)
       }
@@ -53,15 +53,15 @@ export const register = (initial, acceptLocalRules, globalRules, router, notfoun
     beforeCreate () {
       const self = this
 
-      this.$acl = {
+      this.$role = {
         /**
          * Change current permission
          * @param {string|Array} param
          */
-        change(param) {
+        change (param) {
           param = Array.isArray(param) ? param : [param]
           if (currentGlobal.toString() !== param.toString()) {
-            EventBus.$emit('vueacl-permission-changed', param)
+            EventBus.$emit('vue-role-changed', param)
           }
         },
 
@@ -73,33 +73,33 @@ export const register = (initial, acceptLocalRules, globalRules, router, notfoun
         },
 
         /**
-         * reverse current acl check
+         * reverse current role check
          */
-        get not() {
+        get not () {
           not = true
           return this
         },
 
         /**
-         * Check if rule is valid currently
-         * @param {string} ruleName rule name
+         * Check if role is valid currently
+         * @param {string} ruleName role name
          */
-        check(ruleName) {
+        check (ruleName) {
           const hasNot = not
           not = false
 
-          if (ruleName in globalRules) {
-            const result = testPermission(this.get, globalRules[ruleName])
+          if (ruleName in globalRoles) {
+            const result = testRole(this.get, globalRoles[ruleName])
             return hasNot ? !result : result
           }
 
 
           if (ruleName in self) {
-            if (!acceptLocalRules) {
-              return console.error('[vue-acl] acceptLocalRules is not enabled')
+            if (!acceptLocalRoles) {
+              return console.error('[vue-role] acceptLocalRoles is not enabled')
             }
 
-            const result = testPermission(this.get, self[ruleName])
+            const result = testRole(this.get, self[ruleName])
             return hasNot ? !result : result
           }
 
@@ -107,19 +107,19 @@ export const register = (initial, acceptLocalRules, globalRules, router, notfoun
         }
       }
 
-      EventBus.$on('vueacl-permission-changed', newPermission => {
+      EventBus.$on('vue-role-changed', newPermission => {
         currentGlobal = newPermission
-        if ('onChange' in this.$acl) {
-          this.$acl.onChange(currentGlobal)
+        if ('onChange' in this.$role) {
+          this.$role.onChange(currentGlobal)
         }
         this.$forceUpdate()
       })
     },
-    destroyed() {
-      EventBus.$off('vueacl-permission-changed', newPermission => {
+    destroyed () {
+      EventBus.$off('vue-role-changed', newPermission => {
         currentGlobal = newPermission
-        if ('onChange' in this.$acl) {
-          this.$acl.onChange(currentGlobal)
+        if ('onChange' in this.$role) {
+          this.$role.onChange(currentGlobal)
         }
         this.$forceUpdate()
       })

@@ -1,32 +1,30 @@
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.register = undefined;
+exports.register = void 0;
 
-var _vue = require('vue');
+var _vue = _interopRequireDefault(require("vue"));
 
-var _vue2 = _interopRequireDefault(_vue);
-
-var _checker = require('./checker');
+var _checker = require("./checker");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; } // @ts-check
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } } function _next(value) { step("next", value); } function _throw(err) { step("throw", err); } _next(); }); }; }
 
-
-var EventBus = new _vue2.default();
-
+var EventBus = new _vue.default();
 var currentGlobal = [];
 var not = false;
 
-var register = exports.register = function register(initial, acceptLocalRules, globalRules, router, notfound, middleware) {
+var register = function register(initial, acceptLocalRoles, globalRoles, router, notfound, middleware) {
   currentGlobal = Array.isArray(initial) ? initial : [initial];
 
   if (router !== null && middleware) {
     router.beforeEach(function () {
-      var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(to, from, next) {
+      var _ref = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee(to, from, next) {
         var notFoundPath, routePermission;
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
@@ -40,7 +38,6 @@ var register = exports.register = function register(initial, acceptLocalRules, g
                 });
 
               case 2:
-
                 // to be backwards compatible (notfound could be string)
                 notFoundPath = notfound.path || notfound;
 
@@ -49,48 +46,47 @@ var register = exports.register = function register(initial, acceptLocalRules, g
                   break;
                 }
 
-                return _context.abrupt('return', next());
+                return _context.abrupt("return", next());
 
               case 5:
-                if ('rule' in to.meta) {
-                  _context.next = 7;
-                  break;
+                /** @type {Array} */
+                if (!('role' in to.meta)) {
+                  console.warn("[vue-role] ".concat(to.path, " not have role"));
                 }
 
-                return _context.abrupt('return', console.error('[vue-acl] ' + to.path + ' not have rule'));
+                routePermission = to.meta.role;
 
-              case 7:
-                routePermission = to.meta.rule;
-
-
-                if (routePermission in globalRules) {
-                  routePermission = globalRules[routePermission];
+                if (routePermission in globalRoles) {
+                  routePermission = globalRoles[routePermission];
                 }
 
-                if ((0, _checker.testPermission)(currentGlobal, routePermission)) {
-                  _context.next = 13;
-                  break;
-                }
-
-                if (!notfound.forwardQueryParams) {
+                if ((0, _checker.testRole)(currentGlobal, routePermission)) {
                   _context.next = 12;
                   break;
                 }
 
-                return _context.abrupt('return', next({ path: notFoundPath, query: to.query }));
+                if (!notfound.forwardQueryParams) {
+                  _context.next = 11;
+                  break;
+                }
+
+                return _context.abrupt("return", next({
+                  path: notFoundPath,
+                  query: to.query
+                }));
+
+              case 11:
+                return _context.abrupt("return", next(notFoundPath));
 
               case 12:
-                return _context.abrupt('return', next(notFoundPath));
+                return _context.abrupt("return", next());
 
               case 13:
-                return _context.abrupt('return', next());
-
-              case 14:
-              case 'end':
+              case "end":
                 return _context.stop();
             }
           }
-        }, _callee, undefined);
+        }, _callee, this);
       }));
 
       return function (_x, _x2, _x3) {
@@ -107,19 +103,18 @@ var register = exports.register = function register(initial, acceptLocalRules, g
       var _this = this;
 
       var self = this;
-
-      this.$acl = {
+      this.$role = {
         /**
          * Change current permission
          * @param {string|Array} param
          */
         change: function change(param) {
           param = Array.isArray(param) ? param : [param];
+
           if (currentGlobal.toString() !== param.toString()) {
-            EventBus.$emit('vueacl-permission-changed', param);
+            EventBus.$emit('vue-role-changed', param);
           }
         },
-
 
         /**
          * get current permission
@@ -129,7 +124,7 @@ var register = exports.register = function register(initial, acceptLocalRules, g
         },
 
         /**
-         * reverse current acl check
+         * reverse current role check
          */
         get not() {
           not = true;
@@ -137,49 +132,55 @@ var register = exports.register = function register(initial, acceptLocalRules, g
         },
 
         /**
-         * Check if rule is valid currently
-         * @param {string} ruleName rule name
+         * Check if role is valid currently
+         * @param {string} ruleName role name
          */
         check: function check(ruleName) {
           var hasNot = not;
           not = false;
 
-          if (ruleName in globalRules) {
-            var result = (0, _checker.testPermission)(this.get, globalRules[ruleName]);
+          if (ruleName in globalRoles) {
+            var result = (0, _checker.testRole)(this.get, globalRoles[ruleName]);
             return hasNot ? !result : result;
           }
 
           if (ruleName in self) {
-            if (!acceptLocalRules) {
-              return console.error('[vue-acl] acceptLocalRules is not enabled');
+            if (!acceptLocalRoles) {
+              return console.error('[vue-role] acceptLocalRoles is not enabled');
             }
 
-            var _result = (0, _checker.testPermission)(this.get, self[ruleName]);
+            var _result = (0, _checker.testRole)(this.get, self[ruleName]);
+
             return hasNot ? !_result : _result;
           }
 
           return false;
         }
       };
-
-      EventBus.$on('vueacl-permission-changed', function (newPermission) {
+      EventBus.$on('vue-role-changed', function (newPermission) {
         currentGlobal = newPermission;
-        if ('onChange' in _this.$acl) {
-          _this.$acl.onChange(currentGlobal);
+
+        if ('onChange' in _this.$role) {
+          _this.$role.onChange(currentGlobal);
         }
+
         _this.$forceUpdate();
       });
     },
     destroyed: function destroyed() {
       var _this2 = this;
 
-      EventBus.$off('vueacl-permission-changed', function (newPermission) {
+      EventBus.$off('vue-role-changed', function (newPermission) {
         currentGlobal = newPermission;
-        if ('onChange' in _this2.$acl) {
-          _this2.$acl.onChange(currentGlobal);
+
+        if ('onChange' in _this2.$role) {
+          _this2.$role.onChange(currentGlobal);
         }
+
         _this2.$forceUpdate();
       });
     }
   };
 };
+
+exports.register = register;

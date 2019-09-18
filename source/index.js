@@ -11,7 +11,7 @@ let options = {
 
 let Vue
 
-export const AclInstaller = 
+export const AclInstaller =
 (_Vue) => {
   Vue = _Vue
   _install(_Vue, options)
@@ -23,19 +23,19 @@ export class AclCreate {
     _install(Vue, options)
   }
 }
-  
+
 export class AclRule {
-  constructor(permission) {
-    this.current = permission
+  constructor(role) {
+    this.current = role
   }
 
-  or(permission) {
-    this.current += this.current === '' ? permission : `||${permission}`
+  or(role) {
+    this.current += this.current === '' ? role : `||${role}`
     return this
   }
 
-  and(permission) {
-    this.current += this.current === '' ? permission : `&&${permission}`
+  and(role) {
+    this.current += this.current === '' ? role : `&&${role}`
     return this
   }
 

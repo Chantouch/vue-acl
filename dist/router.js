@@ -1,17 +1,17 @@
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.upRouter = undefined;
+exports.upRouter = void 0;
 
-var _vueRouter = require('vue-router');
+var _vueRouter = _interopRequireDefault(require("vue-router"));
 
-var _vueRouter2 = _interopRequireDefault(_vueRouter);
-
-var _checker = require('./checker');
+var _checker = require("./checker");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// @ts-check
 
 /**
  * Up vue router middleware
@@ -19,16 +19,14 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * @param {Array} currentGlobal global current permissions
  * @param {string} notfound not fount route path
  */
-// @ts-check
-var upRouter = exports.upRouter = function upRouter(router, currentGlobal, notfound) {
+var upRouter = function upRouter(router, currentGlobal, notfound) {
   if (router === null) return;
   router.beforeEach(function (to, from, next) {
-
     /** @type {Array} */
     var routePermission = to.meta.rule;
-
     if (!(0, _checker.testPermission)(currentGlobal, routePermission)) return next(notfound);
-
     return next();
   });
 };
+
+exports.upRouter = upRouter;

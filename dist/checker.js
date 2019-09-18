@@ -1,43 +1,41 @@
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.testRole = void 0;
 
 /**
- * Test a rule with a permission group
- * @param {Array} current current permissions
- * @param {Array} rules rule to test
- * @return {boolean} valided rule
+ * Test a rule with a role group
+ * @param {Array} current current roles
+ * @param {Array} roles rule to test
+ * @return {boolean} validated rule
  */
-var testPermission = exports.testPermission = function testPermission(current, rules) {
-  if (rules.generate === undefined && !Array.isArray(rules)) {
-    return console.error('[vue-acl] your have invalid rules');
-  }
-
-  if (!Array.isArray(rules)) {
-    rules = rules.generate();
+var testRole = function testRole(current, roles) {
+  // if (roles.generate === undefined && !Array.isArray(roles)) {
+  //   console.error('[vue-role] you have invalid roles')
+  // }
+  if (!Array.isArray(roles)) {
+    roles = roles.generate();
   }
 
   var hasAllowed = false;
-  rules.forEach(function (rule) {
+  roles.forEach(function (rule) {
     if (rule.includes('*')) hasAllowed = true;
   });
-
   if (hasAllowed) return true;
-
-  var checkAnds = rules.map(function (rule) {
+  var checkAnds = roles.map(function (rule) {
     var valid = true;
     rule.forEach(function (and) {
       return valid = valid && current.includes(and);
     });
     return valid;
   });
-
   var result = false;
   checkAnds.forEach(function (or) {
     if (or) result = or;
   });
-
   return result;
 };
+
+exports.testRole = testRole;

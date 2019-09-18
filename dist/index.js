@@ -1,15 +1,19 @@
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.AclRule = exports.AclCreate = exports.AclInstaller = undefined;
+exports.AclRule = exports.AclCreate = exports.AclInstaller = void 0;
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _install2 = require("./install");
 
-var _install2 = require('./install');
+function _instanceof(left, right) { if (right != null && typeof Symbol !== "undefined" && right[Symbol.hasInstance]) { return right[Symbol.hasInstance](left); } else { return left instanceof right; } }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _classCallCheck(instance, Constructor) { if (!_instanceof(instance, Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var options = {
   initial: '',
@@ -19,42 +23,47 @@ var options = {
     forwardQueryParams: false
   }
 };
+var Vue;
 
-var Vue = void 0;
-
-var AclInstaller = exports.AclInstaller = function AclInstaller(_Vue) {
+var AclInstaller = function AclInstaller(_Vue) {
   Vue = _Vue;
   (0, _install2._install)(_Vue, options);
 };
 
-var AclCreate = exports.AclCreate = function AclCreate(_options) {
+exports.AclInstaller = AclInstaller;
+
+var AclCreate = function AclCreate(_options) {
   _classCallCheck(this, AclCreate);
 
   options = _options;
   (0, _install2._install)(Vue, options);
 };
 
-var AclRule = exports.AclRule = function () {
-  function AclRule(permission) {
+exports.AclCreate = AclCreate;
+
+var AclRule =
+/*#__PURE__*/
+function () {
+  function AclRule(role) {
     _classCallCheck(this, AclRule);
 
-    this.current = permission;
+    this.current = role;
   }
 
   _createClass(AclRule, [{
-    key: 'or',
-    value: function or(permission) {
-      this.current += this.current === '' ? permission : '||' + permission;
+    key: "or",
+    value: function or(role) {
+      this.current += this.current === '' ? role : "||".concat(role);
       return this;
     }
   }, {
-    key: 'and',
-    value: function and(permission) {
-      this.current += this.current === '' ? permission : '&&' + permission;
+    key: "and",
+    value: function and(role) {
+      this.current += this.current === '' ? role : "&&".concat(role);
       return this;
     }
   }, {
-    key: 'generate',
+    key: "generate",
     value: function generate() {
       var splitOrs = this.current.split('||');
       return splitOrs.map(function (o) {
@@ -65,3 +74,5 @@ var AclRule = exports.AclRule = function () {
 
   return AclRule;
 }();
+
+exports.AclRule = AclRule;
