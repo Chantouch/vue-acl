@@ -11,20 +11,20 @@ let options = {
 
 let Vue
 
-export const AclInstaller =
+export const RoleInstaller =
 (_Vue) => {
   Vue = _Vue
   _install(_Vue, options)
 }
 
-export class AclCreate {
+export class RoleCreate {
   constructor(_options) {
     options = _options
     _install(Vue, options)
   }
 }
 
-export class AclRule {
+export class RoleRule {
   constructor(role) {
     this.current = role
   }

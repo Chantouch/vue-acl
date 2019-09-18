@@ -23,8 +23,8 @@ var upRouter = function upRouter(router, currentGlobal, notfound) {
   if (router === null) return;
   router.beforeEach(function (to, from, next) {
     /** @type {Array} */
-    var routePermission = to.meta.rule;
-    if (!(0, _checker.testPermission)(currentGlobal, routePermission)) return next(notfound);
+    var routePermission = to.meta.role;
+    if (!(0, _checker.testRole)(currentGlobal, routePermission)) return next(notfound);
     return next();
   });
 };
