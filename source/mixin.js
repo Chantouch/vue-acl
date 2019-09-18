@@ -1,5 +1,6 @@
 // @ts-check
 import Vue from 'vue'
+import store from "@/store"
 
 import { testRole } from './checker'
 
@@ -29,7 +30,7 @@ export const register = (initial, acceptLocalRoles, globalRoles, router, notfoun
         console.warn(`[vue-role] ${to.path} not have role`)
       }
 
-      let routePermission = to.meta.role
+      let routePermission = to.meta.role || store
 
       if (routePermission in globalRoles) {
         routePermission = globalRoles[routePermission]

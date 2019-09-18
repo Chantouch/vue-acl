@@ -7,6 +7,8 @@ exports.register = void 0;
 
 var _vue = _interopRequireDefault(require("vue"));
 
+var _store = _interopRequireDefault(require("@/store"));
+
 var _checker = require("./checker");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -54,7 +56,7 @@ var register = function register(initial, acceptLocalRoles, globalRoles, router,
                   console.warn("[vue-role] ".concat(to.path, " not have role"));
                 }
 
-                routePermission = to.meta.role;
+                routePermission = to.meta.role || _store.default;
 
                 if (routePermission in globalRoles) {
                   routePermission = globalRoles[routePermission];

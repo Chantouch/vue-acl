@@ -13,7 +13,7 @@ npm install vue-role --save
 
 ## Get Started
 
-Create the `role.js` file to define your role settings and global rules:
+Create the `role.js` file to define your role settings and global roles:
 
 ```javascript
 import Vue from 'vue'
@@ -49,13 +49,13 @@ More details:
   - **initial**: first permission, for startup with your app
   - **notfound**: route for 404 error, add `forwardQueryParams: true` if you want to forward all query params,
   - **router**: your VueRouter instance
-  - **acceptLocalRoles**: if you can define new rules inside vue components
-  - **globalRoles**: define globals rules for access in routes and any components
+  - **acceptLocalRoles**: if you can define new roles inside vue components
+  - **globalRoles**: define globals roles for access in routes and any components
   - **middleware**: async method executed in all route change event, to get user in your api and change permission
-- **Role**: class with rule builder, the instance receive initial permission.
-  - **or**: method for add OR condition in rule, e.g: if current permission is public OR admin the rule isPublic equals true
-  - **and**: method for add AND condition in rule, e.g: if current permission contains user AND inside the rule isLogged equals true
-  - **generate**: this method should called to create and compile your rule query
+- **Role**: class with role builder, the instance receive initial permission.
+  - **or**: method for add OR condition in role, e.g: if current permission is public OR admin the role isPublic equals true
+  - **and**: method for add AND condition in role, e.g: if current permission contains user AND inside the role isLogged equals true
+  - **generate**: this method should called to create and compile your role query
 
 In your `router.js` file, you can define permissions for yours routes:
 
@@ -77,7 +77,7 @@ export default new Router({
       name: 'public',
       component: Public,
       meta: {
-        rule: 'isPublic'
+        role: 'isPublic'
       }
     },
     {
@@ -85,7 +85,7 @@ export default new Router({
       name: 'admin',
       component: Admin,
       meta: {
-        rule: new Role('admin').generate()
+        role: new Role('admin').generate()
       }
     },
     {
@@ -93,7 +93,7 @@ export default new Router({
       name: 'notfound',
       component: NotFound,
       meta: {
-        rule: '*'
+        role: '*'
       }
     }
   ]
@@ -101,7 +101,7 @@ export default new Router({
 ```
 
 More details:
-- Define `rule` meta for link a route with a permission, your can use name of the global rule e.g `isPublic` or use `Role` for create new rule orr use `*` for define allowed route.
+- Define `role` meta for link a route with a permission, your can use name of the global role e.g `isPublic` or use `Role` for create new role orr use `*` for define allowed route.
 
 For finish, in your `main.js` import the `role` and pass to Vue root instance:
 
@@ -122,7 +122,7 @@ new Vue({
 
 ## Use in components
 
-If you defined `acceptLocalRoles` as `true`, you can define computed properties with new rules, but this rules works only in component:
+If you defined `acceptLocalRoles` as `true`, you can define computed properties with new roles, but this roles works only in component:
 
 ```javascript
 import { Role } from 'vue-role'
@@ -136,7 +136,7 @@ export default {
 }
 ```
 
-You can also check rules for display custom elements in your layout:
+You can also check roles for display custom elements in your layout:
 
 ```html
 <button v-if="$role.not.check('isAdmin')">

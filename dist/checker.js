@@ -12,9 +12,10 @@ exports.testRole = void 0;
  * @return {boolean} validated rule
  */
 var testRole = function testRole(current, roles) {
-  // if (roles.generate === undefined && !Array.isArray(roles)) {
-  //   console.error('[vue-role] you have invalid roles')
-  // }
+  if (roles.generate === undefined && !Array.isArray(roles)) {
+    console.error('[vue-role] you have invalid roles');
+  }
+
   if (!Array.isArray(roles)) {
     roles = roles.generate();
   }
