@@ -1,6 +1,7 @@
 // @ts-check
 import VueRouter from 'vue-router'
 import { testRole } from './checker'
+import store from "@/store"
 
 /**
  * Up vue router middleware
@@ -14,7 +15,7 @@ export const upRouter = (router, currentGlobal, notfound) => {
   router.beforeEach((to, from, next) => {
 
     /** @type {Array} */
-    const routePermission = to.meta.role
+    const routePermission = to.meta.role || store.getters["auth/user"]
 
     if (!testRole(currentGlobal, routePermission))
       return next(notfound)

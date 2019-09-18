@@ -9,6 +9,8 @@ var _vueRouter = _interopRequireDefault(require("vue-router"));
 
 var _checker = require("./checker");
 
+var _store = _interopRequireDefault(require("@/store"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // @ts-check
@@ -23,7 +25,7 @@ var upRouter = function upRouter(router, currentGlobal, notfound) {
   if (router === null) return;
   router.beforeEach(function (to, from, next) {
     /** @type {Array} */
-    var routePermission = to.meta.role;
+    var routePermission = to.meta.role || _store.default.getters["auth/user"];
     if (!(0, _checker.testRole)(currentGlobal, routePermission)) return next(notfound);
     return next();
   });

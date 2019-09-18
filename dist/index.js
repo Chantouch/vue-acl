@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.AclRule = exports.AclCreate = exports.AclInstaller = void 0;
+exports.Role = exports.RoleCreate = exports.RoleInstaller = void 0;
 
 var _install2 = require("./install");
 
@@ -25,32 +25,32 @@ var options = {
 };
 var Vue;
 
-var AclInstaller = function AclInstaller(_Vue) {
+var RoleInstaller = function RoleInstaller(_Vue) {
   Vue = _Vue;
   (0, _install2._install)(_Vue, options);
 };
 
-exports.AclInstaller = AclInstaller;
+exports.RoleInstaller = RoleInstaller;
 
-var AclCreate = function AclCreate(_options) {
-  _classCallCheck(this, AclCreate);
+var RoleCreate = function RoleCreate(_options) {
+  _classCallCheck(this, RoleCreate);
 
   options = _options;
   (0, _install2._install)(Vue, options);
 };
 
-exports.AclCreate = AclCreate;
+exports.RoleCreate = RoleCreate;
 
-var AclRule =
+var Role =
 /*#__PURE__*/
 function () {
-  function AclRule(role) {
-    _classCallCheck(this, AclRule);
+  function Role(role) {
+    _classCallCheck(this, Role);
 
     this.current = role;
   }
 
-  _createClass(AclRule, [{
+  _createClass(Role, [{
     key: "or",
     value: function or(role) {
       this.current += this.current === '' ? role : "||".concat(role);
@@ -72,7 +72,7 @@ function () {
     }
   }]);
 
-  return AclRule;
+  return Role;
 }();
 
-exports.AclRule = AclRule;
+exports.Role = Role;

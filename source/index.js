@@ -24,7 +24,7 @@ export class RoleCreate {
   }
 }
 
-export class RoleRule {
+export class Role {
   constructor(role) {
     this.current = role
   }

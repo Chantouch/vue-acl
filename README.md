@@ -17,23 +17,23 @@ Create the `role.js` file to define your role settings and global rules:
 
 ```javascript
 import Vue from 'vue'
-import { AclInstaller, AclCreate, AclRule } from 'vue-role'
+import { RoleInstaller, RoleCreate, Role } from 'vue-role'
 import router from './router'
 
-Vue.use(AclInstaller)
+Vue.use(RoleInstaller)
 
-export default new AclCreate({
+export default new RoleCreate({
   initial: 'public',
   notfound: {
     path: '/error',
     forwardQueryParams: true,
   },
   router,
-  acceptLocalRules: true,
-  globalRules: {
-    isAdmin: new AclRule('admin').generate(),
-    isPublic: new AclRule('public').or('admin').generate(),
-    isLogged: new AclRule('user').and('inside').generate()
+  acceptLocalRoles: true,
+  globalRoles: {
+    isAdmin: new Role('admin').generate(),
+    isPublic: new Role('public').or('admin').generate(),
+    isLogged: new Role('user').and('inside').generate()
   },
   middleware: async role => {
     await timeout(2000) // call your api
@@ -44,15 +44,15 @@ export default new AclCreate({
 
 More details:
 
-- **AclInstaller**: plugin class for install in Vue with Vue.use
-- **AclCreate**: class to define role settings
+- **RoleInstaller**: plugin class for install in Vue with Vue.use
+- **RoleCreate**: class to define role settings
   - **initial**: first permission, for startup with your app
   - **notfound**: route for 404 error, add `forwardQueryParams: true` if you want to forward all query params,
   - **router**: your VueRouter instance
-  - **acceptLocalRules**: if you can define new rules inside vue components
-  - **globalRules**: define globals rules for access in routes and any components
+  - **acceptLocalRoles**: if you can define new rules inside vue components
+  - **globalRoles**: define globals rules for access in routes and any components
   - **middleware**: async method executed in all route change event, to get user in your api and change permission
-- **AclRule**: class with rule builder, the instance receive initial permission.
+- **Role**: class with rule builder, the instance receive initial permission.
   - **or**: method for add OR condition in rule, e.g: if current permission is public OR admin the rule isPublic equals true
   - **and**: method for add AND condition in rule, e.g: if current permission contains user AND inside the rule isLogged equals true
   - **generate**: this method should called to create and compile your rule query
@@ -62,7 +62,7 @@ In your `router.js` file, you can define permissions for yours routes:
 ```javascript
 import Vue from 'vue'
 import Router from 'vue-router'
-import { AclRule } from 'vue-role'
+import { Role } from 'vue-role'
 
 import Public from './views/Public.vue'
 import Admin from './views/Admin.vue'
@@ -85,7 +85,7 @@ export default new Router({
       name: 'admin',
       component: Admin,
       meta: {
-        rule: new AclRule('admin').generate()
+        rule: new Role('admin').generate()
       }
     },
     {
@@ -101,7 +101,7 @@ export default new Router({
 ```
 
 More details:
-- Define `rule` meta for link a route with a permission, your can use name of the global rule e.g `isPublic` or use `AclRule` for create new rule orr use `*` for define allowed route.
+- Define `rule` meta for link a route with a permission, your can use name of the global rule e.g `isPublic` or use `Role` for create new rule orr use `*` for define allowed route.
 
 For finish, in your `main.js` import the `role` and pass to Vue root instance:
 
@@ -122,15 +122,15 @@ new Vue({
 
 ## Use in components
 
-If you defined `acceptLocalRules` as `true`, you can define computed properties with new rules, but this rules works only in component:
+If you defined `acceptLocalRoles` as `true`, you can define computed properties with new rules, but this rules works only in component:
 
 ```javascript
-import { AclRule } from 'vue-role'
+import { Role } from 'vue-role'
 
 export default {
   computed: {
-    isLocalRule () {
-      return new AclRule('create').generate()
+    isLocalRole () {
+      return new Role('create').generate()
     }
   }
 }
@@ -160,7 +160,7 @@ Finish, you can change current permission in any component using `change` method
 </button>
 ```
 
-In your component can add observer for current Rule:
+In your component can add observer for current Role:
 ```javascript
 mounted () {
   this.$role.onChange = newPermission => {
