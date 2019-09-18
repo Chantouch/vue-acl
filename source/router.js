@@ -1,6 +1,6 @@
 // @ts-check
 import VueRouter from 'vue-router'
-import { testPermission } from './checker'
+import { testRole } from './checker'
 
 /**
  * Up vue router middleware
@@ -9,14 +9,14 @@ import { testPermission } from './checker'
  * @param {string} notfound not fount route path
  */
 export const upRouter = (router, currentGlobal, notfound) => {
-  if (router === null)
-    return
+  if (router === null) return
+
   router.beforeEach((to, from, next) => {
 
     /** @type {Array} */
-    const routePermission = to.meta.rule
+    const routePermission = to.meta.role
 
-    if (!testPermission(currentGlobal, routePermission))
+    if (!testRole(currentGlobal, routePermission))
       return next(notfound)
 
     return next()

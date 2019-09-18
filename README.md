@@ -1,4 +1,4 @@
-# vue-acl: access control list in vuejs
+# vue-role: access control list in vuejs
 
 > We will help you to control the permission of access in your app for yours components and routes 
 
@@ -6,18 +6,18 @@
 
 ```bash
 # yarn
-yarn add vue-acl
+yarn add vue-role
 # npm
-npm install vue-acl --save
+npm install vue-role --save
 ```
 
 ## Get Started
 
-Create the `acl.js` file to define your acl settings and global rules:
+Create the `role.js` file to define your role settings and global rules:
 
 ```javascript
 import Vue from 'vue'
-import { AclInstaller, AclCreate, AclRule } from 'vue-acl'
+import { AclInstaller, AclCreate, AclRule } from 'vue-role'
 import router from './router'
 
 Vue.use(AclInstaller)
@@ -35,9 +35,9 @@ export default new AclCreate({
     isPublic: new AclRule('public').or('admin').generate(),
     isLogged: new AclRule('user').and('inside').generate()
   },
-  middleware: async acl => {
+  middleware: async role => {
     await timeout(2000) // call your api
-    acl.change('admin')
+    role.change('admin')
   }
 })
 ```
@@ -45,7 +45,7 @@ export default new AclCreate({
 More details:
 
 - **AclInstaller**: plugin class for install in Vue with Vue.use
-- **AclCreate**: class to define acl settings
+- **AclCreate**: class to define role settings
   - **initial**: first permission, for startup with your app
   - **notfound**: route for 404 error, add `forwardQueryParams: true` if you want to forward all query params,
   - **router**: your VueRouter instance
@@ -62,7 +62,7 @@ In your `router.js` file, you can define permissions for yours routes:
 ```javascript
 import Vue from 'vue'
 import Router from 'vue-router'
-import { AclRule } from 'vue-acl'
+import { AclRule } from 'vue-role'
 
 import Public from './views/Public.vue'
 import Admin from './views/Admin.vue'
@@ -103,19 +103,19 @@ export default new Router({
 More details:
 - Define `rule` meta for link a route with a permission, your can use name of the global rule e.g `isPublic` or use `AclRule` for create new rule orr use `*` for define allowed route.
 
-For finish, in your `main.js` import the `acl` and pass to Vue root instance:
+For finish, in your `main.js` import the `role` and pass to Vue root instance:
 
 ```javascript
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
-import acl from './acl'
+import role from './role'
 
 Vue.config.productionTip = false
 
 new Vue({
   router,
-  acl,
+  role,
   render: h => h(App)
 }).$mount('#app')
 ```
@@ -125,7 +125,7 @@ new Vue({
 If you defined `acceptLocalRules` as `true`, you can define computed properties with new rules, but this rules works only in component:
 
 ```javascript
-import { AclRule } from 'vue-acl'
+import { AclRule } from 'vue-role'
 
 export default {
   computed: {
@@ -139,7 +139,7 @@ export default {
 You can also check rules for display custom elements in your layout:
 
 ```html
-<button v-if="$acl.not.check('isAdmin')">
+<button v-if="$role.not.check('isAdmin')">
   Set admin permisson
 </button>
 <button v-else>
@@ -152,10 +152,10 @@ E.g: if `isAdmin` is **not** true the button 'Set admin permisson' is displayed.
 Finish, you can change current permission in any component using `change` method:
 
 ```html
-<button v-if="$acl.not.check('isAdmin')" @click="$acl.change('admin')">
+<button v-if="$role.not.check('isAdmin')" @click="$role.change('admin')">
   Set admin permisson
 </button>
-<button v-else @click="$acl.change('public')">
+<button v-else @click="$role.change('public')">
   Set public permission
 </button>
 ```
@@ -163,7 +163,7 @@ Finish, you can change current permission in any component using `change` method
 In your component can add observer for current Rule:
 ```javascript
 mounted () {
-  this.$acl.onChange = newPermission => {
+  this.$role.onChange = newPermission => {
     console.log('Has changed to', newPermission)
   }
 }
