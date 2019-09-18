@@ -30,7 +30,7 @@ export const register = (initial, acceptLocalRoles, globalRoles, router, notfoun
         console.warn(`[vue-role] ${to.path} not have role`)
       }
 
-      let routePermission = to.meta.role || store
+      let routePermission = to.meta.role || store.getters["auth/user"]
 
       if (routePermission in globalRoles) {
         routePermission = globalRoles[routePermission]
